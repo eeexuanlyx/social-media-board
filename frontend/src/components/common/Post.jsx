@@ -54,6 +54,7 @@ const Post = ({ post }) => {
     onSuccess: (updatedLikes) => {
       //update cache directly for that post (instead of invalidating query)
       queryClient.setQueryData(["posts"], (oldData) => {
+        if (!oldData) return [];
         return oldData.map((p) => {
           if (p._id === post._id) {
             return { ...p, likes: updatedLikes };
@@ -62,7 +63,53 @@ const Post = ({ post }) => {
         });
       });
     },
-    onError: () => {
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const { mutate: commentPost, isPending: isCommenting } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/comment/${post._id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: comment }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong");
+        }
+
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    onSuccess: (updatedPost) => {
+      toast.success("Comment posted successfully");
+      setComment("");
+      queryClient.setQueryData(["posts"], (oldData) => {
+        if (!oldData) return [];
+        return oldData.map((p) => {
+          if (p._id === post._id) {
+            return {
+              ...p,
+              comments: updatedPost.comments.map((c) => ({
+                ...c,
+                user: c.user || authUser, // Ensure the user field is populated
+              })),
+            };
+          }
+          return p;
+        });
+      });
+    },
+
+    onError: (error) => {
       toast.error(error.message);
     },
   });
@@ -74,14 +121,14 @@ const Post = ({ post }) => {
 
   const formattedDate = "1h";
 
-  const isCommenting = false;
-
   const handleDeletePost = () => {
     deletePost();
   };
 
   const handlePostComment = (e) => {
     e.preventDefault();
+    if (isCommenting) return;
+    commentPost();
   };
 
   const handleLikePost = () => {
@@ -163,31 +210,35 @@ const Post = ({ post }) => {
                         No comments yet 🤔 Be the first one 😉
                       </p>
                     )}
-                    {post.comments.map((comment) => (
-                      <div key={comment._id} className="flex gap-2 items-start">
-                        <div className="avatar">
-                          <div className="w-8 rounded-full">
-                            <img
-                              src={
-                                comment.user.profileImg ||
-                                "/avatar-placeholder.png"
-                              }
-                            />
+                    {Array.isArray(post.comments) &&
+                      post?.comments.map((comment) => (
+                        <div
+                          key={comment._id}
+                          className="flex gap-2 items-start"
+                        >
+                          <div className="avatar">
+                            <div className="w-8 rounded-full">
+                              <img
+                                src={
+                                  comment.user.profileImg ||
+                                  "/avatar-placeholder.png"
+                                }
+                              />
+                            </div>
+                          </div>
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-1">
+                              <span className="font-bold">
+                                {comment.user.fullName}
+                              </span>
+                              <span className="text-gray-700 text-sm">
+                                @{comment.user.username}
+                              </span>
+                            </div>
+                            <div className="text-sm">{comment.text}</div>
                           </div>
                         </div>
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-1">
-                            <span className="font-bold">
-                              {comment.user.fullName}
-                            </span>
-                            <span className="text-gray-700 text-sm">
-                              @{comment.user.username}
-                            </span>
-                          </div>
-                          <div className="text-sm">{comment.text}</div>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                   <form
                     className="flex gap-2 items-center mt-4 border-t border-gray-600 pt-2"
