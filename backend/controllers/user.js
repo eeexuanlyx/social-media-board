@@ -129,7 +129,7 @@ export const updateUser = async (req, res) => {
     if (profileImg) {
       if (user.profileImg) {
         await cloudinary.uploader.destroy(
-          user.profileImg.match(/upload\/(.*?).png/)[1]
+          user.profileImg.split("/").pop().split(".")[0]
         );
       }
 
@@ -140,7 +140,7 @@ export const updateUser = async (req, res) => {
     if (coverImg) {
       if (user.coverImg) {
         await cloudinary.uploader.destroy(
-          user.coverImg.match(/upload\/(.*?).png/)[1]
+          user.coverImg.split("/").pop().split(".")[0]
         );
       }
 
