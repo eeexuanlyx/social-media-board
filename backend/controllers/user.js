@@ -118,7 +118,7 @@ export const updateUser = async (req, res) => {
       if (!isPasswordValid)
         return res.status(400).json({ message: "Invalid password" });
       if (newPassword.length < 10) {
-        res
+        return res
           .status(400)
           .json({ message: "Password must be at least 10 characters long" });
       }
