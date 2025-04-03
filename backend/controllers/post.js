@@ -52,7 +52,6 @@ export const deletePost = async (req, res) => {
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Errpr in deletePost", error.message);
   }
 };
 
@@ -83,7 +82,6 @@ export const commentOnPost = async (req, res) => {
     res.status(200).json(updatedPost);
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in commentOnPost controller", error);
   }
 };
 
@@ -137,7 +135,6 @@ export const likeUnlikePost = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in likeUnlikePost controller", error);
   }
 };
 
@@ -159,7 +156,6 @@ export const getAllPosts = async (req, res) => {
     res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in getAllPosts controller", error);
   }
 };
 
@@ -178,7 +174,6 @@ export const getLikedPosts = async (req, res) => {
     res.status(200).json(likedPosts);
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in getLikedPosts controller", error);
   }
 };
 
@@ -198,7 +193,6 @@ export const getFollowingPosts = async (req, res) => {
     res.status(200).json(feedPosts);
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in getFollowingPosts controller", error);
   }
 };
 
@@ -217,6 +211,5 @@ export const getUserPosts = async (req, res) => {
     res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in getUserPosts controller", error);
   }
 };

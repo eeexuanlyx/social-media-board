@@ -13,7 +13,6 @@ export const getUserProfile = async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
-    console.log("Error in getUserProfile", error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -55,7 +54,6 @@ export const followUnfollowUser = async (req, res) => {
       res.status(200).json({ message: "Followed successfully" });
     }
   } catch (error) {
-    console.log("Error in followUnfollowUser", error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -85,7 +83,6 @@ export const getSuggestedUsers = async (req, res) => {
 
     res.status(200).json(suggestedUsers);
   } catch (error) {
-    console.log("Error in getSuggestedUsers", error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -162,7 +159,6 @@ export const updateUser = async (req, res) => {
 
     return res.status(200).json({ user });
   } catch (error) {
-    console.log("Error in updateUser", error.message);
     res.status(500).json({ message: error.message });
   }
 };
